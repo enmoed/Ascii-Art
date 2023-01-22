@@ -1,0 +1,85 @@
+enmoed
+
+Shell: This class is responsible for collecting input to the user and processing it to the rest of the
+       application. It collects the input through the console and preforms according to it.
+
+BrightnessImgCharMatcher: This class is responsible for matching between a given set of chars and sub-sections
+                          of a given image. It does this by matching between the brightness of a sub-image
+                          and the char with the most similar brightness.
+
+Image: This interface is used to create image classes. It assures that all image classes have a certain
+       implementation so other classes can access the image elements.
+
+FileImage: This class implements the Image interface. It receives an image and manipulates it to allow access
+           to the different elements later.
+
+Bonus - SubImageDecorator: This class acts as a decorator for an Image object. It manipulates the image to be
+                           able to access sub-sections of it, as new images, through the ImageIteratorProperty
+                           class.
+
+Bonus cont. - I decided to use the properties already provided to be able to build, with maximum simplicity,
+              an iterator for sub-images. When reviewing the ImageIterableProperty, I noticed that
+              it would be quite simple to use the iterator as long as I was able to reset the size of a given
+              image to represent the number of images in a row/column. As this API was given to us, I
+              decided not to change it and make it more generic, although this is probably the ultimate
+              solution, and create a new class that can work around this issue. Therefore, I built an Image
+              decorator that would manipulate the dimensions of the image to allow this type of iteration.
+              Additionally, I added a function that would return a new anonymous image, representing a shallow
+              copy of a section of the original image.
+
+API Design: As the goal of this assignment was complexity, without much room for class design, I will share
+            certain in-class design choices. In the BrightnessImgCharMatcher I decided to build two static
+            maps holding reusable data. The goal of this was to reduce runtime complexity following an initial
+            call to this class. Specifically, I mapped between the resolution and a sub-map of image index to
+            brightness. Additionally, I mapped between characters and their brightness. By doing so, I was
+            able to reload from "cache" the image resolutions if I already calculated them according to a
+            specific size. I was also able to reload char brightness, if I already calculated it before. These
+            choices allowed me to reduce runtime complexity, albeit at the price of O(n)space complexity.
+
+            In terms of the overall API, I did not see a need to add new functionality as I was able to solve
+            this exercise with the API given. This adhered to encapsulation. In terms of the decorator,
+            as explained before, I viewed it as a special functionality we could use to iterate over
+            sub-images.
+
+Implementation issues: The decorator built, as referred to before, manipulates the sizes of the given image.
+                       This is an implementation issue that can cause some confusion. Therefore, I view it as
+                       more optimal to be able to change the original pixel iterator API so that it can
+                       receive a sub-image in row number, and iterate according to that calculation - and not
+                       by the image width/height.
+
+Time/Space Complexity: I will divide this answer according to the algorithm stages:
+
+                       1. Adding borders - Given an n*m Image, worst case we will need to add borders at
+                       O(n*m) - this is due to the need to nearly double the amount of rows and columns at
+                       worst case. Notice we iterate over our array of arrays once, regardless of the border
+                       size.
+
+                       2. Changing the image to sub-images-  we implemented this through an iterator, and to
+                       iterate over it takes O(n*m) worst case - if the sub-images are single pixels. The
+                       space complexity is O(i) where i represents the size of a sub-image. At maximum we
+                       created O((n*m)i) sub-images space complexity.
+
+                       3. We used a static map, and a static list to hold the data we calculated. This helped
+                       reduce time complexity. We fill a char list according to its value in the map, while
+                       at worst case, we have to calculate it's brightness and add it to the map. Since there
+                       are only a constant <100 number of chars available - we fill this map over constant
+                       time with O(c) calculation time per char, but, due to the map, we only preform this
+                       once. Filling the list is therefore reduced from O(n*c) to O(n) - where n is a constant
+                       <100 number of chars in the set available. Additionally, the map and list space
+                       complexity is also of constant size due to the maximum amount of chars available.
+                       I chose a list so that I would have random access according to index O(1), to be able
+                       to find the matching char brightness, without manipulating the data structure holding
+                       the charSet.
+
+                       4. We used a nested static map to help us convert an image to a char with reduced time
+                       complexity. At worst case we need to build a new map and insert it into the static map.
+                       Making a new map is O(n*m) space complexity according to the resolution of the image,
+                       while calculating it is also O((n*m)c) time complexity as we need to go through all the
+                       sub-images and calculate their brightness. Although the resolution might change, we
+                       will always need to go through all the pixels. Therefore, by having a static map we
+                       are able to reduce the calculation time complexity so that going through all the images
+                       is only O(n*m) at worst case, with maximum sub-images. The space complexity of the
+                       outer map is O(t) where t is the number of different resolutions possible.
+                       Additionally, I chose a map so that I would be able to access the values of it within
+                       O(1) time complexity. This allowed random access according to the resolution of the
+                       image.
