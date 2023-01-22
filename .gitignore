@@ -1,2 +1,9 @@
 # Project exclude paths
 /out/
+/.idea
+/out.html
+/ex4.iml
+src/baby.jpeg
+src/board.jpeg
+src/wiki.jpeg
+src/ex4.jar
