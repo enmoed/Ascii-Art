@@ -1,4 +1,5 @@
-enmoed
+This project was built for an assignment at The Hebrew University of Jerusalem School of Computer Science
+Some of the files included are part of provided course material for the assignment.
 
 Shell: This class is responsible for collecting input to the user and processing it to the rest of the
        application. It collects the input through the console and preforms according to it.
